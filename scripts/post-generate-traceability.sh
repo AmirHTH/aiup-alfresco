@@ -48,7 +48,7 @@ case "$FILE_PATH" in
     IS_GENERATED=true
     ;;
   # /test artefacts
-  *IT.java|*.postman_collection.json)
+  *IT.java|http-tests/*.sh)
     ARTEFACT_TYPE="test"
     IS_GENERATED=true
     ;;
