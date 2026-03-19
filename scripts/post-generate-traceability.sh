@@ -32,11 +32,6 @@ case "$FILE_PATH" in
     ARTEFACT_TYPE="web-script"
     IS_GENERATED=true
     ;;
-  # /rest-api artefacts
-  *Controller.java|*Entry.java|*Paging.java|*openapi*.yaml|*openapi*.yml)
-    ARTEFACT_TYPE="rest-api"
-    IS_GENERATED=true
-    ;;
   # /behaviours artefacts
   *Behaviour.java|*behavior*.xml|*service-context.xml)
     ARTEFACT_TYPE="behaviour"

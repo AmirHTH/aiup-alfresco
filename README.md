@@ -61,7 +61,6 @@ Skills are invoked automatically by Claude during command execution:
 - **content-model-validator** — validates model XML structure and naming
 - **docker-compose-healthcheck-injector** — ensures healthchecks on all services
 - **sdk-version-detector** — detects SDK version and adjusts generated code
-- **rest-api-convention-enforcer** — checks REST path and paging conventions
 
 ## Agents
 

@@ -29,5 +29,5 @@ Report:
 - Detected ACS version
 - Java version requirement
 - Whether to use XML or Java-based Spring configuration
-- Whether to target Web Scripts or REST API controllers
+- Confirm Web Scripts as the API implementation pattern
 - Any version-specific warnings

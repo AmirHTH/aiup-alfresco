@@ -38,8 +38,7 @@ Given [context], when [action], then [expected result].
 - Associations (if any)
 
 ### 5. API Requirements
-- REST endpoints needed (method, path, request/response)
-- Web Scripts needed (if any)
+- Web Scripts needed (method, URL pattern, request/response)
 
 ### 6. Behaviour Requirements
 - Policies/behaviours to trigger on node events
