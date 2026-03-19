@@ -1,0 +1,22 @@
+{
+  "name": "aiup-alfresco",
+  "version": "0.1.0",
+  "description": "Claude Code plugin for Alfresco/Hyland extension development — slash commands, skills, and agents.",
+  "author": {
+    "name": "Angel Fernando Borroy",
+    "url": "https://github.com/aborroy"
+  },
+  "homepage": "https://github.com/aborroy/aiup-alfresco",
+  "repository": "https://github.com/aborroy/aiup-alfresco",
+  "license": "Apache-2.0",
+  "keywords": [
+    "alfresco",
+    "hyland",
+    "ecm",
+    "content-management"
+  ],
+  "skills": "./skills/",
+  "commands": "./commands/",
+  "agents": "./agents/",
+  "hooks": "./hooks/hooks.json"
+}

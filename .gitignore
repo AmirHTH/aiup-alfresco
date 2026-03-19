@@ -24,7 +24,6 @@ hs_err_pid*
 replay_pid*
 
 .claude/
-.claude-plugin/
 
 .DS_Store
 .AppleDouble
