@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[description of the extension]"
 ---
 
-# /1_requirements — Requirements Gathering
+# /requirements — Requirements Gathering
 
 You are helping the user define requirements for an Alfresco Content Services extension.
 
@@ -53,10 +53,10 @@ Given [context], when [action], then [expected result].
 | Requirement ID | User Story | Content Model | API | Behaviour | Test |
 |---------------|------------|---------------|-----|-----------|------|
 
-Leave the Test column empty — it will be filled by `/8_test`.
+Leave the Test column empty — it will be filled by `/test`.
 
 ## Instructions
 - Ask clarifying questions if the description is ambiguous
 - Default to Platform JAR packaging (not AMP)
 - Reference CLAUDE.md conventions for naming and structure
-- The output must be complete enough for `/2_content_model` through `/8_test` to consume
+- The output must be complete enough for `/content-model` through `/test` to consume

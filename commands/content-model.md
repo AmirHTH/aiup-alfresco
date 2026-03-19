@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /2_content_model — Content Model Generator
+# /content-model — Content Model Generator
 
 Generate Alfresco content model files based on requirements.
 

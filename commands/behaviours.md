@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /5_behaviours — Behaviour/Policy Generator
+# /behaviours — Behaviour/Policy Generator
 
 Generate Alfresco behaviour classes for node event handling.
 

@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /4_rest_api — REST API Generator
+# /rest-api — REST API Generator
 
 Generate modern REST API code using Spring `@RestController` pattern.
 

@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /3_web_scripts — Web Script Generator
+# /web-scripts — Web Script Generator
 
 Generate Web Script files from requirements.
 

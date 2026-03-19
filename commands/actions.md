@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /6_actions — Action Executor Generator
+# /actions — Action Executor Generator
 
 Generate Alfresco action classes.
 

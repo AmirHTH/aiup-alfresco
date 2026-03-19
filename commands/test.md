@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
-# /8_test — Test Generator
+# /test — Test Generator
 
 Generate tests for the Alfresco extension.
 

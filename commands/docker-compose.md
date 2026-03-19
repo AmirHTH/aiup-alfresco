@@ -4,7 +4,7 @@ allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[ACS version, e.g. 25.3]"
 ---
 
-# /7_docker_compose — Docker Compose Generator
+# /docker-compose — Docker Compose Generator
 
 Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 
