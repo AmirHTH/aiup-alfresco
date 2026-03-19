@@ -33,6 +33,7 @@ Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 - `share` — Share UI (if content model forms are needed)
 - `proxy` — Nginx or similar reverse proxy
 - `content-app` — Alfresco Content App (ACA)
+- `{extension-name}` — Out-of-Process Spring Boot app (if `/events` command was used)
 
 ## Conventions
 - Use Docker Compose v2 format (no `version:` key)
@@ -40,6 +41,7 @@ Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 - Use `condition: service_healthy` in `depends_on`
 - Use named volumes for persistent data
 - Reference CLAUDE.md for image tags and environment variables
+- If an Out-of-Process Spring Boot app is present, add it as a service that depends on `activemq` and `alfresco` with `condition: service_healthy`
 
 ## Validation
 After generation, invoke `docker-compose-healthcheck-injector` skill.

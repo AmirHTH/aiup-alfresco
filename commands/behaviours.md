@@ -1,12 +1,15 @@
 ---
-description: "Scaffold Alfresco behaviour/policy classes with Spring bean wiring."
+description: "Scaffold Alfresco behaviour/policy classes with Spring bean wiring. In-Process SDK (Maven) only."
 allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
 # /behaviours — Behaviour/Policy Generator
 
-Generate Alfresco behaviour classes for node event handling.
+> **In-Process SDK only** — deploys inside the ACS JVM as a Platform JAR.
+> For asynchronous event-driven reactions to repository changes from an external app, use `/events` (Out-of-Process) instead.
+
+Generate Alfresco behaviour classes for synchronous node event handling.
 
 ## Input
 Read `REQUIREMENTS.md` to identify behaviour requirements.

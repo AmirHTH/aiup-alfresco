@@ -32,6 +32,7 @@ claude --plugin-dir /path/to/aiup-alfresco
 
 2. **Run the workflow** inside Claude Code:
 
+   **In-Process extensions** (behaviours, web scripts, actions — deployed as JAR/AMP inside ACS):
    ```
    /requirements        # Gather requirements as user stories
    /content-model       # Generate content model XML
@@ -42,25 +43,35 @@ claude --plugin-dir /path/to/aiup-alfresco
    /test                # Generate integration tests
    ```
 
+   **Out-of-Process extensions** (event listeners — deployed as a separate Spring Boot app):
+   ```
+   /requirements        # Gather requirements as user stories
+   /events              # Generate Spring Boot event listener
+   /docker-compose      # Generate full ACS stack + listener service compose.yaml
+   /test                # Generate integration tests
+   ```
+
 ## Commands
 
-| Command | Output |
-|---------|--------|
-| `/requirements` | Requirements document (Markdown) |
-| `/content-model` | Content model XML + Spring context |
-| `/web-scripts` | Web Script descriptor + controller + FreeMarker template |
-| `/behaviours` | Behaviour/policy class + Spring bean wiring |
-| `/actions` | `ActionExecuter` class + bean registration |
-| `/docker-compose` | `compose.yaml` with full ACS stack |
-| `/test` | Integration test class |
+| Command | SDK | Output |
+|---------|-----|--------|
+| `/requirements` | Both | Requirements document (Markdown) |
+| `/content-model` | In-Process | Content model XML + Spring context |
+| `/web-scripts` | In-Process | Web Script descriptor + controller + FreeMarker template |
+| `/behaviours` | In-Process | Behaviour/policy class + Spring bean wiring |
+| `/actions` | In-Process | `ActionExecuter` class + bean registration |
+| `/events` | Out-of-Process | Spring Boot event listener + ActiveMQ config |
+| `/docker-compose` | Both | `compose.yaml` with full ACS stack |
+| `/test` | Both | Integration test class |
 
 ## Skills
 
 Skills are invoked automatically by Claude during command execution:
 
-- **content-model-validator** — validates model XML structure and naming
-- **docker-compose-healthcheck-injector** — ensures healthchecks on all services
-- **sdk-version-detector** — detects SDK version and adjusts generated code
+- **content-model-validator** — validates model XML structure and naming *(In-Process)*
+- **docker-compose-healthcheck-injector** — ensures healthchecks on all services *(Both)*
+- **sdk-version-detector** — detects In-Process vs Out-of-Process SDK and adjusts generated code *(Both)*
+- **event-api-topology-checker** — validates ActiveMQ topic names and event consumer patterns *(Out-of-Process)*
 
 ## Agents
 
@@ -79,7 +90,7 @@ Skills are invoked automatically by Claude during command execution:
 | Spring Boot | 3.x |
 | Docker Compose | v2 |
 
-## Quickstart: Content Model to Docker in 10 Minutes
+## Quickstart: In-Process Extension (Content Model + Web Scripts)
 
 ```
 # 1. Scaffold requirements from a business description
@@ -101,6 +112,26 @@ Skills are invoked automatically by Claude during command execution:
 mvn clean package
 docker compose up -d
 mvn verify -Dalfresco.host=http://localhost:8080
+```
+
+## Quickstart: Out-of-Process Extension (Event Listener)
+
+```
+# 1. Scaffold requirements
+/requirements "Notify an external system when a document is approved"
+
+# 2. Generate the Spring Boot event listener
+/events
+
+# 3. Generate Docker Compose (ACS stack + listener service)
+/docker-compose
+
+# 4. Generate integration tests
+/test
+
+# 5. Build and deploy
+mvn clean package
+docker compose up -d
 ```
 
 ## Hooks

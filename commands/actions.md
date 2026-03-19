@@ -1,10 +1,12 @@
 ---
-description: "Scaffold Alfresco ActionExecuter classes with Spring bean registration."
+description: "Scaffold Alfresco ActionExecuter classes with Spring bean registration. In-Process SDK (Maven) only."
 allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
 # /actions — Action Executor Generator
+
+> **In-Process SDK only** — deploys inside the ACS JVM as a Platform JAR.
 
 Generate Alfresco action classes.
 

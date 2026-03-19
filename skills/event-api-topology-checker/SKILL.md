@@ -1,12 +1,15 @@
 ---
-description: "Validates ActiveMQ topic names and consumer group patterns against Alfresco event API conventions. Trigger when generating event-driven code."
+description: "Validates ActiveMQ topic names and consumer group patterns against Alfresco event API conventions. Applies to Out-of-Process SDK (Spring Boot) only. Trigger when generating event-driven code with /events."
 user-invocable: false
 allowed-tools: "Read, Grep"
 ---
 
 # Event API Topology Checker
 
-Validate event-driven code against Alfresco Java Event API conventions.
+Validate **Out-of-Process** event-driven code against Alfresco Java Event API conventions.
+
+> This skill applies exclusively to the **Spring Boot Out-of-Process SDK** (`alfresco-java-sdk`).
+> In-Process extensions (behaviours, actions) run inside the ACS JVM and do not use this event bus — use behaviours/policies instead.
 
 ## Topic Naming
 - Default Alfresco topic: `alfresco.repo.event2`

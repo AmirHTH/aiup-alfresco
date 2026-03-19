@@ -1,10 +1,12 @@
 ---
-description: "Generate Alfresco Web Script descriptors, controllers, and FreeMarker templates."
+description: "Generate Alfresco Web Script descriptors, controllers, and FreeMarker templates. In-Process SDK (Maven) only."
 allowed-tools: "Read, Write, Grep, Glob"
 argument-hint: "[path to REQUIREMENTS.md or description]"
 ---
 
 # /web-scripts — Web Script Generator
+
+> **In-Process SDK only** — deploys inside the ACS JVM as a Platform JAR.
 
 Generate Web Script files from requirements.
 
