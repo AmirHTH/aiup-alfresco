@@ -64,6 +64,24 @@ alfresco/alfresco-transform-core-aio:5.4.0
 > for the parent itself.  The Alfresco Nexus repository (`https://artifacts.alfresco.com/nexus/content/groups/public`)
 > is still required for runtime dependencies (`alfresco-repository`, `alfresco-remote-api`, etc.)
 > and is configured automatically by the `alfresco-sdk-aggregator` parent POM.
+> The parent does **not** supply dependency versions for platform libraries in a standalone Platform JAR.
+> Generated POMs must also import `${alfresco.bomDependency.artifactId}` in `<dependencyManagement>`
+> using `${alfresco.platform.version}`.
+
+Required dependency-management import:
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>${alfresco.bomDependency.artifactId}</artifactId>
+            <version>${alfresco.platform.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
 
 Key dependencies:
 ```xml
@@ -75,6 +93,11 @@ Key dependencies:
 <dependency>
     <groupId>org.alfresco</groupId>
     <artifactId>alfresco-repository</artifactId>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.alfresco.surf</groupId>
+    <artifactId>spring-webscripts</artifactId>
     <scope>provided</scope>
 </dependency>
 ```

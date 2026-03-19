@@ -109,10 +109,25 @@ Aggregator POM at the repo root, two child modules as sibling directories.
     <properties>
         <alfresco.platform.version>{acs-version}.0</alfresco.platform.version>
         <alfresco.platform.war.artifactId>alfresco-community</alfresco.platform.war.artifactId>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.alfresco</groupId>
+                <artifactId>${alfresco.bomDependency.artifactId}</artifactId>
+                <version>${alfresco.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -126,13 +141,14 @@ Aggregator POM at the repo root, two child modules as sibling directories.
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.extensions.surf</groupId>
+            <groupId>org.alfresco.surf</groupId>
             <artifactId>spring-webscripts</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -147,11 +163,13 @@ Aggregator POM at the repo root, two child modules as sibling directories.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration><release>17</release></configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <excludes><exclude>**/*IT.java</exclude></excludes>
                 </configuration>
@@ -164,8 +182,11 @@ Aggregator POM at the repo root, two child modules as sibling directories.
 **Rules:**
 - `alfresco.platform.version` must end in `.0` (e.g. ACS `26.1` → `26.1.0`)
 - `alfresco.platform.war.artifactId` is always `alfresco-community` for development scaffolding
+- Import `${alfresco.bomDependency.artifactId}` in `<dependencyManagement>` to resolve Alfresco and Spring versions
 - `spring-webscripts` must be listed explicitly even though it is transitive via `alfresco-remote-api`
-- Do NOT add version tags to Alfresco dependencies — the SDK parent BOM manages them
+- Use `org.alfresco.surf:spring-webscripts` for ACS 26.1 scaffolds
+- Do NOT add version tags to Alfresco dependencies — the Alfresco BOM manages them after it is imported
+- Pin `junit-jupiter`, `maven-compiler-plugin`, and `maven-surefire-plugin` explicitly in the generated POM
 - Do NOT add the AMP plugin unless the user explicitly requests AMP packaging
 
 ---
