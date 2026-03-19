@@ -324,25 +324,34 @@ COPY target/{artifact}.jar /usr/local/tomcat/webapps/alfresco/WEB-INF/lib/
 
 ### ActiveMQ Configuration
 
-ActiveMQ 6.2.1 requires authentication. All services connecting to the broker must supply matching credentials.
+ActiveMQ 6.2.1 requires authentication. There are two distinct layers of variable names — do not confuse them:
+
+| Layer | Variable | Description |
+|-------|----------|-------------|
+| **Project convention** | `ACTIVEMQ_USER` | Defined once in the compose file; holds the chosen username value |
+| **Project convention** | `ACTIVEMQ_PASSWORD` | Defined once in the compose file; holds the chosen password value |
+| **ActiveMQ container** | `ACTIVEMQ_USERNAME` | Image-specific variable name the broker reads; mapped from `ACTIVEMQ_USER` |
+| **ActiveMQ container** | `ACTIVEMQ_PASSWORD` | Same name as the project variable — no mapping needed |
+| **Spring clients** | `SPRING_ACTIVEMQ_USER` | Variable name Spring Boot reads; mapped from `ACTIVEMQ_USER` |
+| **Spring clients** | `SPRING_ACTIVEMQ_PASSWORD` | Variable name Spring Boot reads; mapped from `ACTIVEMQ_PASSWORD` |
 
 ```yaml
 activemq:
   image: docker.io/alfresco/alfresco-activemq:6.2.1-jre17-rockylinux8
   environment:
     ACTIVEMQ_OPTS: "-Xms512m -Xmx1g"
-    ACTIVEMQ_USERNAME: ${ACTIVEMQ_USER}
+    ACTIVEMQ_USERNAME: ${ACTIVEMQ_USER}      # image expects ACTIVEMQ_USERNAME
     ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD}
 ```
 
 Every service that connects to ActiveMQ (ACS, Transform Service, Share, Out-of-Process extensions) must set:
 ```yaml
 environment:
-  SPRING_ACTIVEMQ_USER: ${ACTIVEMQ_USER}
+  SPRING_ACTIVEMQ_USER: ${ACTIVEMQ_USER}       # Spring expects SPRING_ACTIVEMQ_USER
   SPRING_ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD}
 ```
 
-- Define `ACTIVEMQ_USER` and `ACTIVEMQ_PASSWORD` as environment variables in the compose file (no `.env` file)
+- Define `ACTIVEMQ_USER` and `ACTIVEMQ_PASSWORD` once in the compose file (no `.env` file)
 - Use the same values consistently across all services — mismatches cause silent connection failures
 
 ---
