@@ -1,7 +1,7 @@
 ---
 description: "Generate a Docker Compose file with full ACS stack."
 allowed-tools: "Read, Write, Grep, Glob"
-argument-hint: "[ACS version, e.g. 25.3]"
+argument-hint: "[ACS version, e.g. 26.1]"
 ---
 
 # /docker-compose — Docker Compose Generator
@@ -9,7 +9,7 @@ argument-hint: "[ACS version, e.g. 25.3]"
 Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 
 ## Input
-- ACS version from "$ARGUMENTS" or default to 25.3
+- ACS version from "$ARGUMENTS" or default to 26.1
 - Read `REQUIREMENTS.md` for any deployment-specific requirements
 
 ## Output File

@@ -1,5 +1,5 @@
 ---
-description: "Reads pom.xml or build.gradle, detects Alfresco SDK version, and adjusts generated code accordingly. SDK 4.x and 6.x APIs differ significantly. Trigger when generating Java code for Alfresco extensions."
+description: "Reads pom.xml or build.gradle, detects Alfresco SDK version, and adjusts generated code accordingly. Trigger when generating Java code for Alfresco extensions."
 user-invocable: false
 allowed-tools: "Read, Grep, Glob"
 ---
@@ -19,8 +19,8 @@ Detect the Alfresco SDK version from the project build files and report which co
 
 | SDK Version | ACS Version | Java | Spring | Key Differences |
 |-------------|-------------|------|--------|-----------------|
-| 4.x | 6.x-7.x | 11 | 5.x | Legacy `ServiceRegistry`, `AuthenticationUtil`, XML bean config |
-| 6.x | 25.x | 17+ | 6.x/Boot 3.x | `@AlfrescoService` annotations, Java config, REST API v1 preferred |
+| 4.x (≤4.11) | 6.x–7.x | 11 | 5.x | Legacy `ServiceRegistry`, `AuthenticationUtil`, XML bean config |
+| 4.x (4.12+) | 25.x–26.1 | 17+ | 6.x/Boot 3.x | Web Scripts, XML for Alfresco integration points, Java config for internal wiring |
 
 ## Output
 

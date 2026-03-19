@@ -12,9 +12,8 @@ Scan Alfresco extension code for deprecated API usage and suggest modern replace
 
 | Deprecated | Replacement | Since |
 |-----------|-------------|-------|
-| `ServiceRegistry.getNodeService()` | `@Autowired NodeService` | SDK 6.x |
-| Web Script Java controllers extending `DeclarativeWebScript` | REST API `@RestController` | ACS 7.x |
-| `AuthenticationUtil.setFullyAuthenticatedUser()` | Spring Security context | SDK 6.x |
+| `ServiceRegistry.getNodeService()` | `@Autowired NodeService` | SDK 4.x+ |
+| `AuthenticationUtil.setFullyAuthenticatedUser()` | `AuthenticationUtil.runAs()` | SDK 4.x+ |
 | Direct Hibernate session access | `NodeService` / `ContentService` | Always |
 | AMP packaging | JAR packaging | SDK 4.2+ |
 | `AbstractLifecycleBean` for bootstrap | `@PostConstruct` / `ApplicationReadyEvent` | Spring Boot 3.x |

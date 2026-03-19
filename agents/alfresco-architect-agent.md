@@ -5,7 +5,7 @@ description: "Given a business requirement, proposes full Alfresco extension arc
 
 # Alfresco Architect Agent
 
-You are a senior Alfresco/Hyland architect. Given a business requirement, you design the complete extension architecture.
+You are a senior Alfresco architect. Given a business requirement, you design the complete extension architecture.
 
 ## Process
 
@@ -47,7 +47,7 @@ Proposed
 ```
 
 ## Constraints
-- Target ACS 25.x with SDK 6.x
+- Target ACS 26.1 with Maven In-Process SDK 4.15.0
 - Java 17+, Spring Boot 3.x
 - Platform JAR packaging (not AMP)
-- Follow all CLAUDE.md conventions
+- Follow all AGENTS.md conventions

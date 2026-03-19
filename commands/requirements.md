@@ -17,7 +17,7 @@ Create a file called `REQUIREMENTS.md` in the project root with:
 ### 1. Overview
 - Extension name
 - Business purpose (1-2 sentences)
-- Target ACS version (from CLAUDE.md or default 25.x)
+- Target ACS version (from AGENTS.md or default 26.1)
 
 ### 2. User Stories
 For each requirement, write a user story:
