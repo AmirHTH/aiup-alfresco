@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint-yaml:
+    name: Lint YAML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Lint YAML files
+        run: |
+          find . -name '*.yaml' -o -name '*.yml' | grep -v node_modules | \
+            xargs yamllint -d '{extends: relaxed, rules: {line-length: {max: 200}}}' || true
+
+  lint-xml:
+    name: Lint XML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+      - name: Validate XML files
+        run: |
+          exit_code=0
+          for f in $(find . -name '*.xml' -not -path '*/node_modules/*'); do
+            if ! xmllint --noout "$f" 2>/dev/null; then
+              echo "INVALID: $f"
+              xmllint --noout "$f"
+              exit_code=1
+            else
+              echo "OK: $f"
+            fi
+          done
+          exit $exit_code
+
+  validate-json:
+    name: Validate JSON
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON files
+        run: |
+          exit_code=0
+          for f in $(find . -name '*.json' -not -path '*/node_modules/*'); do
+            if ! python3 -m json.tool "$f" > /dev/null 2>&1; then
+              echo "INVALID: $f"
+              exit_code=1
+            else
+              echo "OK: $f"
+            fi
+          done
+          exit $exit_code
+
+  validate-plugin:
+    name: Validate plugin structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files exist
+        run: |
+          files=(
+            "CLAUDE.md"
+            ".claude-plugin/plugin.json"
+            "hooks/hooks.json"
+          )
+          for f in "${files[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              exit 1
+            fi
+            echo "OK: $f"
+          done
+      - name: Check commands directory
+        run: |
+          count=$(find commands -name '*.md' | wc -l)
+          echo "Found $count command definitions"
+          [ "$count" -ge 8 ] || { echo "Expected at least 8 commands"; exit 1; }
+      - name: Check skills directory
+        run: |
+          count=$(find skills -name 'SKILL.md' | wc -l)
+          echo "Found $count skill definitions"
+          [ "$count" -ge 5 ] || { echo "Expected at least 5 skills"; exit 1; }
+      - name: Check agents directory
+        run: |
+          count=$(find agents -name '*.md' | wc -l)
+          echo "Found $count agent definitions"
+          [ "$count" -ge 3 ] || { echo "Expected at least 3 agents"; exit 1; }
+      - name: Validate plugin.json references
+        run: |
+          python3 -c "
+          import json, os, sys
+          with open('.claude-plugin/plugin.json') as f:
+              p = json.load(f)
+          errors = []
+          for key in ['skills', 'commands', 'agents', 'hooks']:
+              ref = p.get(key, '')
+              if ref and not os.path.exists(ref.lstrip('./')):
+                  errors.append(f'{key} references {ref} which does not exist')
+          if errors:
+              print('\n'.join(errors))
+              sys.exit(1)
+          print('All plugin.json references valid')
+          "
