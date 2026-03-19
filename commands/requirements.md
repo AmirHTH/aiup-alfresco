@@ -10,6 +10,33 @@ You are helping the user define requirements for an Alfresco Content Services ex
 
 Given the user's description in "$ARGUMENTS", produce a structured requirements document.
 
+## Architecture Decision (ask first)
+
+Before writing any section, ask the following two questions if the description does
+not make the answers obvious.  Record the answers — they determine the whole project
+structure.
+
+**Q1 — Synchronous or asynchronous reaction?**
+> "Does this feature need to react *within the same transaction* as the user action
+> (e.g. reject an upload, enforce a rule, return an immediate API response)?
+> Or can it react *after* the fact, asynchronously (e.g. send a notification,
+> trigger an integration, update an analytics system)?"
+
+**Q2 — Does it expose a repository REST API or web script?**
+> "Does the feature need to expose a custom REST endpoint served by the ACS
+> JVM itself?"
+
+**Decision table** (use to populate Section 1 — Project Architecture):
+
+| Synchronous reaction needed | REST API needed | Out-of-process reaction needed | Result |
+|-----------------------------|-----------------|-------------------------------|--------|
+| Yes | Yes/No | No | **Platform JAR only** |
+| No | No | Yes | **Event Handler only** |
+| Yes | Yes/No | Yes | **Mixed** (both) |
+| No | Yes | No | **Platform JAR only** |
+
+---
+
 ## Output Format
 
 Create a file called `REQUIREMENTS.md` in the project root with:
@@ -19,43 +46,66 @@ Create a file called `REQUIREMENTS.md` in the project root with:
 - Business purpose (1-2 sentences)
 - Target ACS version (from AGENTS.md or default 26.1)
 
-### 2. User Stories
+### 2. Project Architecture
+
+Derived from the architecture decision above.  Every subsequent section must
+reference which project each requirement belongs to.
+
+```
+| Project | Type | SDK | Root path | Purpose |
+|---------|------|-----|-----------|---------|
+| `{name}-platform` | Platform JAR | alfresco-sdk-parent 4.15.0 | `{name}-platform/` (or `.` if only project) | Synchronous behaviours, web scripts, content model |
+| `{name}-events`   | Event Handler | alfresco-java-sdk 7.2.0   | `{name}-events/`   (omit if not needed)     | Async event-driven processing |
+```
+
+Rules:
+- Include only the projects the feature actually needs.
+- When there is only one project, its root path is `.` (the repo root), not a subdirectory.
+- When both projects exist, they are siblings under the repo root and built by a top-level aggregator POM.
+
+### 3. User Stories
 For each requirement, write a user story:
 ```
 As a [role], I want to [action], so that [benefit].
 ```
 
-### 3. Acceptance Criteria
+### 4. Acceptance Criteria
 For each user story, list testable acceptance criteria:
 ```
 Given [context], when [action], then [expected result].
 ```
 
-### 4. Content Model Requirements
+### 5. Content Model Requirements
+*(Platform JAR only — omit section if no Platform JAR)*
 - Custom types needed (with parent type)
 - Custom aspects needed
 - Properties for each type/aspect (name, data type, mandatory, constraints)
 - Associations (if any)
 
-### 5. API Requirements
+### 6. API Requirements
+*(Platform JAR only — omit section if no Platform JAR)*
 - Web Scripts needed (method, URL pattern, request/response)
 
-### 6. Behaviour Requirements
-- Policies/behaviours to trigger on node events
-- Actions to register
+### 7. Behaviour Requirements
+- **In-process behaviours** *(Platform JAR)*: Policies/behaviours to trigger on node events synchronously; actions to register
+- **Event handlers** *(Event Handler)*: Alfresco Java Event API event types to consume and the async action to take
 
-### 7. Deployment Requirements
+### 8. Deployment Requirements
 - Docker Compose services needed
 - Environment-specific configuration
 
-### 8. Traceability Matrix
-| Requirement ID | User Story | Content Model | API | Behaviour | Test |
-|---------------|------------|---------------|-----|-----------|------|
+### 9. Traceability Matrix
+| Requirement ID | Project | User Story | Content Model | API | Behaviour / Handler | Test |
+|---------------|---------|------------|---------------|-----|---------------------|------|
 
 Leave the Test column empty — it will be filled by `/test`.
+Add a **Project** column so each row is clearly tied to a specific project.
+
+---
 
 ## Instructions
-- Ask clarifying questions if the description is ambiguous
+- Ask the two architecture questions before writing any section if the description is ambiguous
 - Default to Platform JAR packaging; use AMP only when the extension must bundle third-party libraries not already on the Alfresco classpath
 - Reference CLAUDE.md conventions for naming and structure
-- The output must be complete enough for `/content-model` through `/test` to consume
+- The output must be complete enough for `/scaffold` through `/test` to consume
+- A behaviour that must roll back a transaction is *always* in-process; a side-effect that can be retried is *always* out-of-process

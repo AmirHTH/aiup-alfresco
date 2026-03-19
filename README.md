@@ -34,7 +34,8 @@ claude --plugin-dir /path/to/aiup-alfresco
 
    **In-Process extensions** (behaviours, web scripts, actions — deployed as JAR/AMP inside ACS):
    ```
-   /requirements        # Gather requirements as user stories
+   /requirements        # Gather requirements + decide project architecture
+   /scaffold            # Generate pom.xml, module.properties, module-context.xml
    /content-model       # Generate content model XML
    /web-scripts         # Generate Web Script descriptors & controllers
    /behaviours          # Scaffold behaviours/policies
@@ -45,24 +46,37 @@ claude --plugin-dir /path/to/aiup-alfresco
 
    **Out-of-Process extensions** (event listeners — deployed as a separate Spring Boot app):
    ```
-   /requirements        # Gather requirements as user stories
+   /requirements        # Gather requirements + decide project architecture
+   /scaffold            # Generate pom.xml, Application.java, application.properties
    /events              # Generate Spring Boot event listener
    /docker-compose      # Generate full ACS stack + listener service compose.yaml
    /test                # Generate integration tests
    ```
 
+   **Mixed extensions** (both in-process and out-of-process components):
+   ```
+   /requirements        # Gather requirements + decide project architecture
+   /scaffold            # Generate aggregator POM + both sub-module skeletons
+   /content-model       # Generate content model XML  (platform sub-module)
+   /behaviours          # Scaffold behaviours/policies (platform sub-module)
+   /events              # Generate Spring Boot event listener (events sub-module)
+   /docker-compose      # Generate full ACS stack compose.yaml
+   /test                # Generate integration tests for both modules
+   ```
+
 ## Commands
 
-| Command | SDK | Output |
-|---------|-----|--------|
-| `/requirements` | Both | Requirements document (Markdown) |
-| `/content-model` | In-Process | Content model XML + Spring context |
-| `/web-scripts` | In-Process | Web Script descriptor + controller + FreeMarker template |
-| `/behaviours` | In-Process | Behaviour/policy class + Spring bean wiring |
-| `/actions` | In-Process | `ActionExecuter` class + bean registration |
-| `/events` | Out-of-Process | Spring Boot event listener + ActiveMQ config |
-| `/docker-compose` | Both | `compose.yaml` with full ACS stack |
-| `/test` | Both | Integration test class |
+| Command | SDK | Run order | Output |
+|---------|-----|-----------|--------|
+| `/requirements` | Both | 1st | Requirements document (Markdown) + **project architecture decision** |
+| `/scaffold` | Both | 2nd | `pom.xml`, `module.properties`, `module-context.xml` (in-process); `pom.xml`, `Application.java`, `application.properties` (out-of-process); aggregator POM + both sub-module skeletons (mixed) |
+| `/content-model` | In-Process | 3rd | Content model XML + Spring bootstrap context |
+| `/web-scripts` | In-Process | Any | Web Script descriptor + controller + FreeMarker template |
+| `/behaviours` | In-Process | Any | Behaviour/policy class + Spring bean wiring |
+| `/actions` | In-Process | Any | `ActionExecuter` class + bean registration |
+| `/events` | Out-of-Process | Any | Spring Boot event listener + ActiveMQ config |
+| `/docker-compose` | Both | Before last | `compose.yaml` with full ACS stack |
+| `/test` | Both | Last | Integration test class + HTTP test scripts |
 
 ## Skills
 
@@ -93,22 +107,25 @@ Skills are invoked automatically by Claude during command execution:
 ## Quickstart: In-Process Extension (Content Model + Web Scripts)
 
 ```
-# 1. Scaffold requirements from a business description
+# 1. Gather requirements — /requirements decides project architecture
 /requirements "We need to manage technical documents with categories and review dates"
 
-# 2. Generate the content model
+# 2. Scaffold the Maven project (pom.xml, module.properties, module-context.xml)
+/scaffold
+
+# 3. Generate the content model
 /content-model
 
-# 3. Generate Web Scripts for querying documents
+# 4. Generate Web Scripts for querying documents
 /web-scripts
 
-# 4. Generate Docker Compose with the full ACS stack
+# 5. Generate Docker Compose with the full ACS stack
 /docker-compose
 
-# 5. Generate integration tests
+# 6. Generate integration tests
 /test
 
-# 6. Build, deploy, and verify
+# 7. Build, deploy, and verify
 mvn clean package
 docker compose up -d
 mvn verify -Dalfresco.host=http://localhost:8080
@@ -117,19 +134,49 @@ mvn verify -Dalfresco.host=http://localhost:8080
 ## Quickstart: Out-of-Process Extension (Event Listener)
 
 ```
-# 1. Scaffold requirements
+# 1. Gather requirements — /requirements decides project architecture
 /requirements "Notify an external system when a document is approved"
 
-# 2. Generate the Spring Boot event listener
+# 2. Scaffold the Spring Boot project (pom.xml, Application.java, application.properties)
+/scaffold
+
+# 3. Generate the Spring Boot event listener
 /events
 
-# 3. Generate Docker Compose (ACS stack + listener service)
+# 4. Generate Docker Compose (ACS stack + listener service)
 /docker-compose
 
-# 4. Generate integration tests
+# 5. Generate integration tests
 /test
 
-# 5. Build and deploy
+# 6. Build and deploy
+mvn clean package
+docker compose up -d
+```
+
+## Quickstart: Mixed Extension (In-Process + Out-of-Process)
+
+```
+# 1. Gather requirements — /requirements detects that both SDKs are needed
+/requirements "Enforce a content rule synchronously and notify Slack asynchronously"
+
+# 2. Scaffold both sub-modules under an aggregator POM
+/scaffold
+
+# 3. Generate the content model and behaviour (platform sub-module)
+/content-model
+/behaviours
+
+# 4. Generate the event listener (events sub-module)
+/events
+
+# 5. Generate Docker Compose covering both components
+/docker-compose
+
+# 6. Generate tests for both modules
+/test
+
+# 7. Build everything from the aggregator root
 mvn clean package
 docker compose up -d
 ```
