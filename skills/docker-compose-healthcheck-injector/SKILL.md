@@ -1,5 +1,5 @@
 ---
-description: "Ensures every service in a Docker Compose file has a healthcheck block and depends_on uses condition: service_healthy. Trigger when generating or editing compose.yaml or docker-compose.yml."
+description: "Ensures every service in a Docker Compose file has a healthcheck block and depends_on uses condition: service_healthy. Trigger when generating or editing compose.yaml."
 user-invocable: false
 allowed-tools: "Read, Grep, Glob"
 ---

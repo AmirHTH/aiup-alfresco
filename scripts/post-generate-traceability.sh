@@ -48,7 +48,7 @@ case "$FILE_PATH" in
     IS_GENERATED=true
     ;;
   # /docker-compose artefacts
-  *compose.yaml|*compose.yml|*docker-compose.yaml|*docker-compose.yml|*Dockerfile)
+  *compose.yaml|*Dockerfile)
     ARTEFACT_TYPE="docker-compose"
     IS_GENERATED=true
     ;;
