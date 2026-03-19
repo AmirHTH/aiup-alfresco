@@ -18,10 +18,26 @@ This file defines the conventions that every AI agent must follow when generatin
 | Docker Compose | v2 | No `version:` key in compose files |
 | PostgreSQL | 15.6 | Default database |
 | Apache ActiveMQ | 6.2.1 | Event messaging — authentication required |
-| Search | Elasticsearch 8.x (Search Enterprise) or Solr 6 | Choose per project |
+| Search Enterprise (OpenSearch) | 4.0 | **Recommended** — OpenSearch 2.x or Elasticsearch 8.x backend |
+| Search Services (Solr) | 2.0.18 | Alternative — Solr-based, community default |
 | Transform Service | 5.4.0 | AIO (all-in-one) for development |
 
-### Docker Images (ACS 26.1 defaults)
+### Docker Images (ACS 26.1)
+
+Choose one search profile per deployment — do not mix them.
+
+#### Profile A — Search Enterprise / OpenSearch (recommended)
+
+```
+alfresco/alfresco-content-repository-community:26.1.0
+alfresco/alfresco-share:26.1.0
+opensearchproject/opensearch:2.x
+postgres:15.6
+docker.io/alfresco/alfresco-activemq:6.2.1-jre17-rockylinux8
+alfresco/alfresco-transform-core-aio:5.4.0
+```
+
+#### Profile B — Search Services / Solr
 
 ```
 alfresco/alfresco-content-repository-community:26.1.0
@@ -250,7 +266,7 @@ All collection responses must use the Alfresco paging envelope:
 - `ALFRESCO_USERNAME` / `ALFRESCO_PASSWORD` — credentials for tests
 - `JAVA_OPTS` — JVM options for Alfresco and Share containers
 - `ACTIVEMQ_USER` / `ACTIVEMQ_PASSWORD` — ActiveMQ broker credentials; must match across all services
-- `SOLR_ALFRESCO_SECRET` — shared secret between ACS and Solr; required in healthchecks and ACS config
+- `SOLR_ALFRESCO_SECRET` — shared secret between ACS and Solr; required in healthchecks and ACS config *(Search Services profile only)*
 
 ### Healthcheck Endpoints
 
@@ -260,8 +276,8 @@ All collection responses must use the Alfresco paging envelope:
 | Share | `curl -f -u admin:$${ALFRESCO_PASSWORD} http://localhost:8080/share` |
 | PostgreSQL | `pg_isready -d alfresco -U alfresco` |
 | ActiveMQ | `/opt/activemq/bin/activemq query --user $${ACTIVEMQ_USER} --password $${ACTIVEMQ_PASSWORD} --objname "type=Broker,brokerName=*,service=Health" \| grep Good` |
-| Solr | `curl -f -H "X-Alfresco-Search-Secret: $${SOLR_ALFRESCO_SECRET}" http://localhost:8983/solr/alfresco/admin/ping` |
-| Elasticsearch | `curl -s http://localhost:9200/_cluster/health \| grep -q 'green\|yellow'` |
+| Solr *(Search Services)* | `curl -f -H "X-Alfresco-Search-Secret: $${SOLR_ALFRESCO_SECRET}" http://localhost:8983/solr/alfresco/admin/ping` |
+| OpenSearch / Elasticsearch *(Search Enterprise)* | `curl -s http://localhost:9200/_cluster/health \| grep -q 'green\|yellow'` |
 | Transform | `curl -f http://localhost:8090/ready` |
 
 ### Extension Deployment
