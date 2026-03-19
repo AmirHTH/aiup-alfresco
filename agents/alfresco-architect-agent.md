@@ -49,5 +49,5 @@ Proposed
 ## Constraints
 - Target ACS 26.1 with Maven In-Process SDK 4.15.0
 - Java 17+, Spring Boot 3.x
-- Platform JAR packaging (not AMP)
+- Default to Platform JAR packaging; use AMP only when the extension must bundle third-party libraries not already on the Alfresco classpath
 - Follow all AGENTS.md conventions

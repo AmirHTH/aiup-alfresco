@@ -15,7 +15,7 @@ Scan Alfresco extension code for deprecated API usage and suggest modern replace
 | `ServiceRegistry.getNodeService()` | `@Autowired NodeService` | SDK 4.x+ |
 | `AuthenticationUtil.setFullyAuthenticatedUser()` | `AuthenticationUtil.runAs()` | SDK 4.x+ |
 | Direct Hibernate session access | `NodeService` / `ContentService` | Always |
-| AMP packaging | JAR packaging | SDK 4.2+ |
+| AMP packaging with no third-party library deps | JAR packaging | SDK 4.2+ |
 | `AbstractLifecycleBean` for bootstrap | `@PostConstruct` / `ApplicationReadyEvent` | Spring Boot 3.x |
 | Alfresco Explorer (JSF) customizations | ACA/ADW extensions | ACS 6.0+ |
 | CMIS 1.0 | CMIS 1.1 or REST API v1 | ACS 5.2+ |

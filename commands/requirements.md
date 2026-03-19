@@ -57,6 +57,6 @@ Leave the Test column empty — it will be filled by `/test`.
 
 ## Instructions
 - Ask clarifying questions if the description is ambiguous
-- Default to Platform JAR packaging (not AMP)
+- Default to Platform JAR packaging; use AMP only when the extension must bundle third-party libraries not already on the Alfresco classpath
 - Reference CLAUDE.md conventions for naming and structure
 - The output must be complete enough for `/content-model` through `/test` to consume
