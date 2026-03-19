@@ -98,7 +98,7 @@ Skills are invoked automatically by Claude during command execution:
 | Component | Version |
 |-----------|---------|
 | Alfresco Content Services | 26.1 |
-| Maven In-Process SDK | 4.15.0 |
+| Maven In-Process SDK (`alfresco-sdk-aggregator`) | 4.15.0 |
 | Spring Boot Out-of-Process SDK | 7.2.0 |
 | Java | 17+ |
 | Spring Boot | 3.x |

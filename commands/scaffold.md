@@ -91,7 +91,7 @@ Aggregator POM at the repo root, two child modules as sibling directories.
 
     <parent>
         <groupId>org.alfresco.maven</groupId>
-        <artifactId>alfresco-sdk-parent</artifactId>
+        <artifactId>alfresco-sdk-aggregator</artifactId>
         <version>4.15.0</version>
     </parent>
 

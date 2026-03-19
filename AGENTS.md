@@ -9,7 +9,7 @@ This file defines the conventions that every AI agent must follow when generatin
 | Component | Version | Notes |
 |-----------|---------|-------|
 | Alfresco Content Services (ACS) | 26.1 | Community or Enterprise |
-| Maven In-Process SDK | 4.15.0 | Platform JAR, deployed inside ACS — [alfresco-sdk](https://github.com/Alfresco/alfresco-sdk) |
+| Maven In-Process SDK | 4.15.0 (`alfresco-sdk-aggregator`) | Platform JAR, deployed inside ACS — [alfresco-sdk](https://github.com/Alfresco/alfresco-sdk) |
 | Spring Boot Out-of-Process SDK | 7.2.0 | External Spring Boot app — [alfresco-java-sdk](https://github.com/Alfresco/alfresco-java-sdk) |
 | Java | 17+ | LTS, required by ACS 26.1 |
 | Spring Boot | 3.x | Managed by SDK parent POM |
@@ -53,10 +53,17 @@ alfresco/alfresco-transform-core-aio:5.4.0
 ```xml
 <parent>
     <groupId>org.alfresco.maven</groupId>
-    <artifactId>alfresco-sdk-parent</artifactId>
+    <artifactId>alfresco-sdk-aggregator</artifactId>
     <version>4.15.0</version>
 </parent>
 ```
+
+> `alfresco-sdk-aggregator` is the correct artifact ID for SDK 4.x.
+> `alfresco-sdk-parent` is an obsolete artifact last published in 2016 (max version 2.2.0) — never use it.
+> SDK 4.15.0 is published on Maven Central; no extra `<repository>` entry is needed in `pom.xml`
+> for the parent itself.  The Alfresco Nexus repository (`https://artifacts.alfresco.com/nexus/content/groups/public`)
+> is still required for runtime dependencies (`alfresco-repository`, `alfresco-remote-api`, etc.)
+> and is configured automatically by the `alfresco-sdk-aggregator` parent POM.
 
 Key dependencies:
 ```xml
