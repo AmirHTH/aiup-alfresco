@@ -17,6 +17,10 @@
   ],
   "skills": "./skills/",
   "commands": "./commands/",
-  "agents": "./agents/",
+  "agents": [
+    "./agents/alfresco-architect-agent.md",
+    "./agents/alfresco-debugger-agent.md",
+    "./agents/alfresco-migrator-agent.md"
+  ],
   "hooks": "./hooks/hooks.json"
 }
