@@ -1,6 +1,8 @@
 # aiup-alfresco
 
-A [Claude Code](https://claude.com/claude-code) plugin that packages Alfresco/Hyland extension development as slash commands, skills, and agents — lowering the barrier for new developers and accelerating experienced ones.
+A [Claude Code](https://claude.com/claude-code) plugin that packages Alfresco/Hyland extension development as slash commands, skills, and agents: lowering the barrier for new developers and accelerating experienced ones.
+
+AIUP (AI Unified Process) is a spec-driven approach to AI-assisted development. This project applies AIUP principles to Alfresco extensions.
 
 ## Prerequisites
 
