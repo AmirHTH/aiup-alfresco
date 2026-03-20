@@ -434,3 +434,6 @@ These patterns must **never** appear in generated code. Actively check for and r
 | `@Transactional` on Alfresco service calls | Alfresco manages its own transactions | Use `RetryingTransactionHelper` if needed |
 | Wildcard imports (`import *`) | Clarity and conflict risk | Explicit imports |
 | Reserved namespace prefixes | Conflicts with Alfresco core | Use project-specific prefix |
+| `<mandatory enforced="true">` on aspect properties | `enforced="true"` fires `IntegrityChecker` via `OnAddAspectPolicy` before `addAspect()` writes the properties map, causing a spurious `IntegrityException: Mandatory property not set` | Use `<mandatory>true</mandatory>` (no `enforced` attribute) — defers the check to `beforeCommit` |
+| Quoted phrase syntax in transactional AFTS queries | `@prefix\:prop:"value"` triggers `DEFAULT` analysis mode, which the DB query engine rejects with `QueryModelException: Analysis mode not supported for DB DEFAULT` | Prefix with `=`: `=@prefix\:prop:"value"` to force `IDENTIFIER`/exact-match mode |
+| Expensive operations before eligibility check in behaviours | Every upload pays the full behaviour cost even when the behaviour is not configured for that folder | Check scope/eligibility first (cheap `NodeService` calls); return early before any content streaming, hashing, or locking |

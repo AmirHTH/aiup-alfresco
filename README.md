@@ -23,14 +23,7 @@ claude --plugin-dir /path/to/aiup-alfresco
 
 ## Quick Start
 
-1. **Start an ACS 26.1 environment**:
-
-   ```bash
-   # Use /docker-compose to generate a compose.yaml, then:
-   docker compose up -d
-   ```
-
-2. **Run the workflow** inside Claude Code:
+**Run the workflow** inside Claude Code:
 
    **In-Process extensions** (behaviours, web scripts, actions — deployed as JAR/AMP inside ACS):
    ```
