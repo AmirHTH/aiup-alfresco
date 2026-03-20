@@ -98,11 +98,30 @@ jobs:
           import json, os, sys
           with open('.claude-plugin/plugin.json') as f:
               p = json.load(f)
+
+          def normalize_refs(value):
+              if isinstance(value, str):
+                  return [value]
+              if isinstance(value, list):
+                  return value
+              if value in (None, ''):
+                  return []
+              raise TypeError(f'Unsupported reference type: {type(value).__name__}')
+
           errors = []
           for key in ['skills', 'commands', 'agents', 'hooks']:
-              ref = p.get(key, '')
-              if ref and not os.path.exists(ref.lstrip('./')):
-                  errors.append(f'{key} references {ref} which does not exist')
+              try:
+                  refs = normalize_refs(p.get(key, ''))
+              except TypeError as exc:
+                  errors.append(f'{key} has invalid value: {exc}')
+                  continue
+
+              for ref in refs:
+                  if not isinstance(ref, str):
+                      errors.append(f'{key} contains a non-string reference: {ref!r}')
+                      continue
+                  if ref and not os.path.exists(ref.lstrip('./')):
+                      errors.append(f'{key} references {ref} which does not exist')
           if errors:
               print('\n'.join(errors))
               sys.exit(1)
