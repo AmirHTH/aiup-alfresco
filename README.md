@@ -1,6 +1,6 @@
 # aiup-alfresco
 
-A [Claude Code](https://claude.com/claude-code) plugin and portable prompt pack for Alfresco/Hyland extension development. It packages the workflow as command specs, skills, and agents so the same repository guidance can be reused from Claude, Codex, OpenClaw, or another coding agent.
+A [Claude Code](https://claude.com/claude-code) plugin and portable prompt pack for Alfresco extension development. It packages the workflow as command specs, skills, and agents so the same repository guidance can be reused from Claude, Codex, OpenClaw, or another coding agent.
 
 AIUP (AI Unified Process) is a spec-driven approach to AI-assisted development. This project applies AIUP principles to Alfresco extensions.
 
