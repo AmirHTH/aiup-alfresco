@@ -1,15 +1,15 @@
 # aiup-alfresco
 
-A [Claude Code](https://claude.com/claude-code) plugin that packages Alfresco/Hyland extension development as slash commands, skills, and agents: lowering the barrier for new developers and accelerating experienced ones.
+A [Claude Code](https://claude.com/claude-code) plugin and portable prompt pack for Alfresco/Hyland extension development. It packages the workflow as command specs, skills, and agents so the same repository guidance can be reused from Claude, Codex, OpenClaw, or another coding agent.
 
 AIUP (AI Unified Process) is a spec-driven approach to AI-assisted development. This project applies AIUP principles to Alfresco extensions.
 
 ## Prerequisites
 
-- [Claude Code](https://claude.com/claude-code) CLI installed and configured
 - Java 17+
 - Maven 3.9+
 - Docker & Docker Compose
+- [Claude Code](https://claude.com/claude-code) CLI installed and configured if you want native slash commands
 
 ## Installation
 
@@ -22,6 +22,39 @@ Or for local development:
 ```bash
 claude --plugin-dir /path/to/aiup-alfresco
 ```
+
+If you are using Codex, OpenClaw, or another agent, installation is optional; you can use the portable renderer below directly from the repository checkout.
+
+## Portable Use Outside Claude
+
+The slash-command UX is Claude-specific, but the command logic is portable because it lives in `commands/*.md` and `AGENTS.md`.
+
+List the available commands:
+
+```bash
+./scripts/aiup-command.sh list
+```
+
+Render a Codex-compatible prompt for `/requirements`:
+
+```bash
+./scripts/aiup-command.sh render --agent codex requirements \
+  "We need to manage technical documents with categories and review dates"
+```
+
+Render an OpenClaw-compatible prompt for `/scaffold`:
+
+```bash
+./scripts/aiup-command.sh render --agent openclaw scaffold
+```
+
+The renderer emits a plain prompt that tells the target agent to:
+
+- read `AGENTS.md`
+- execute the requested `commands/<name>.md`
+- handle any referenced `skills/` or `agents/` files manually
+
+See [PORTABILITY.md](./PORTABILITY.md) for the non-Claude workflow.
 
 ## Quick Start
 

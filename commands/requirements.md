@@ -54,7 +54,7 @@ reference which project each requirement belongs to.
 ```
 | Project | Type | SDK | Root path | Purpose |
 |---------|------|-----|-----------|---------|
-| `{name}-platform` | Platform JAR | alfresco-sdk-parent 4.15.0 | `{name}-platform/` (or `.` if only project) | Synchronous behaviours, web scripts, content model |
+| `{name}-platform` | Platform JAR | alfresco-sdk-aggregator 4.15.0 | `{name}-platform/` (or `.` if only project) | Synchronous behaviours, web scripts, content model |
 | `{name}-events`   | Event Handler | alfresco-java-sdk 7.2.0   | `{name}-events/`   (omit if not needed)     | Async event-driven processing |
 ```
 

@@ -49,7 +49,7 @@ Proposed
 ## Constraints
 - Target ACS 26.1, Java 17+, Spring Boot 3.x
 - Choose the SDK based on requirements:
-  - **In-Process SDK 4.15.0** (`alfresco-sdk-parent`) — for behaviours, web scripts, actions, content model bootstrap; deployed as Platform JAR inside ACS. Use AMP only when the extension must bundle third-party libraries not on the Alfresco classpath.
+  - **In-Process SDK 4.15.0** (`alfresco-sdk-aggregator`) — for behaviours, web scripts, actions, content model bootstrap; deployed as Platform JAR inside ACS. Use AMP only when the extension must bundle third-party libraries not on the Alfresco classpath.
   - **Out-of-Process SDK 7.2.0** (`alfresco-java-sdk`) — for event listeners, external integrations, async processing; deployed as a separate Spring Boot service alongside ACS.
   - Both SDKs may coexist in the same project when requirements span synchronous and asynchronous concerns.
 - Follow all AGENTS.md conventions

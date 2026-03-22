@@ -12,14 +12,14 @@ Detect which Alfresco SDK the project uses and report which code generation patt
 
 1. Search for `pom.xml` in the project root and submodules
 2. Check `<parent>` `<artifactId>`:
-   - `alfresco-sdk-parent` → **In-Process SDK** (Maven)
+   - `alfresco-sdk-aggregator` → **In-Process SDK** (Maven)
    - `alfresco-java-sdk` → **Out-of-Process SDK** (Spring Boot)
 3. If neither parent is found, check for `alfresco-java-event-api-spring-boot-starter` dependency → Out-of-Process
 4. If still unclear, check for `alfresco.platform.version` or `acs.version` properties → In-Process
 
 ## SDK Types
 
-### In-Process SDK (Maven SDK `alfresco-sdk-parent`)
+### In-Process SDK (Maven SDK `alfresco-sdk-aggregator`)
 Deploys as a **Platform JAR or AMP inside the ACS JVM**.
 
 | SDK Version | ACS Version | Java | Spring | Patterns |
