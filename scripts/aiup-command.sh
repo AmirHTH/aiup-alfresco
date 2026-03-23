@@ -83,6 +83,7 @@ render_agent_preamble() {
 You are Codex working directly in this repository.
 Follow the repository rules in AGENTS.md before doing anything else.
 Implement the command by editing files when the command requires generated output; do not stop at a summary.
+If REQUIREMENTS.md declares both Platform JAR and Event Handler projects, keep them as separate sibling modules/deployables and write files under the Section 2 Root path for each project.
 EOF
             ;;
         openclaw)
@@ -90,6 +91,7 @@ EOF
 You are OpenClaw working directly in this repository.
 Follow the repository rules in AGENTS.md before doing anything else.
 Implement the command by editing files when the command requires generated output; do not stop at a summary.
+If REQUIREMENTS.md declares both Platform JAR and Event Handler projects, keep them as separate sibling modules/deployables and write files under the Section 2 Root path for each project.
 EOF
             ;;
         generic)
@@ -97,6 +99,7 @@ EOF
 You are an AI coding agent working directly in this repository.
 Follow the repository rules in AGENTS.md before doing anything else.
 Implement the command by editing files when the command requires generated output; do not stop at a summary.
+If REQUIREMENTS.md declares both Platform JAR and Event Handler projects, keep them as separate sibling modules/deployables and write files under the Section 2 Root path for each project.
 EOF
             ;;
     esac

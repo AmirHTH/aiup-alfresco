@@ -12,24 +12,30 @@ argument-hint: "[path to REQUIREMENTS.md or description]"
 Generate Alfresco behaviour classes for synchronous node event handling.
 
 ## Input
-Read `REQUIREMENTS.md` to identify behaviour requirements.
+Read `REQUIREMENTS.md` to identify behaviour requirements and resolve the Platform JAR
+project's `Root path` from Section 2 (Project Architecture).
+
+- If Section 2 contains no `Platform JAR` project, stop and explain that `/behaviours`
+  only applies to the in-process repository addon project.
 
 ## Output Files
 
 ### 1. Behaviour Class
-`src/main/java/{package}/behaviour/{Name}Behaviour.java`
+`{platform-project-root}/src/main/java/{package}/behaviour/{Name}Behaviour.java`
 - Implement appropriate policy interface (`OnCreateNodePolicy`, `OnUpdatePropertiesPolicy`, `OnAddAspectPolicy`, etc.)
 - Register behaviour in `init()` method using `PolicyComponent`
 - Inject required Alfresco services
 
 ### 2. Spring Bean Configuration
-Add bean definition to `src/main/resources/alfresco/module/{module-id}/context/service-context.xml`
+Add bean definition to `{platform-project-root}/src/main/resources/alfresco/module/{module-id}/context/service-context.xml`
 
 ## Conventions
+- `{platform-project-root}` is `.` for Platform JAR only mode, or `{name}-platform/` for Mixed mode
 - Use `JavaBehaviour` with `NotificationFrequency.TRANSACTION_COMMIT` (default) or `EVERY_EVENT` where specified
 - Bind to specific types/aspects from the content model
 - Log at appropriate levels
 - Handle transaction context properly
+- Never generate behaviours inside the Event Handler project
 
 ## Transactional AFTS Query Rules
 

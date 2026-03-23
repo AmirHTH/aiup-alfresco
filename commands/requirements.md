@@ -35,6 +35,12 @@ structure.
 | Yes | Yes/No | Yes | **Mixed** (both) |
 | No | Yes | No | **Platform JAR only** |
 
+**Important:** **Mixed** means **two separate projects/deployables** in the same repository:
+- one Platform JAR / AMP loaded by ACS
+- one standalone Spring Boot Event Handler service
+
+It never means a single Maven module containing both repository addon code and event-listener code.
+
 ---
 
 ## Output Format
@@ -62,6 +68,8 @@ Rules:
 - Include only the projects the feature actually needs.
 - When there is only one project, its root path is `.` (the repo root), not a subdirectory.
 - When both projects exist, they are siblings under the repo root and built by a top-level aggregator POM.
+- When both projects exist, they are deployed separately: the Platform JAR/AMP goes into ACS, and the Event Handler runs as an independent Spring Boot service.
+- The `Root path` column is authoritative for all downstream commands; every generated file must be written under the matching project root, never under the other project's root.
 
 ### 3. User Stories
 For each requirement, write a user story:

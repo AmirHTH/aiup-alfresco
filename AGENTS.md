@@ -130,6 +130,15 @@ Standard Maven multi-module Platform JAR structure:
 
 > **Note:** The layout below is for the **Maven In-Process SDK** (Platform JAR). The Spring Boot Out-of-Process SDK follows a standard Spring Boot project structure.
 
+### Deployment Boundary
+
+- Treat the **Platform JAR / AMP** and the **Event Handler** as separate deployables.
+- If a solution needs both, scaffold a mixed repository with two sibling projects/modules: `{name}-platform/` and `{name}-events/`.
+- In mixed mode, the repo root may contain the aggregator `pom.xml`, `compose.yaml`, `REQUIREMENTS.md`, and shared docs/scripts, but no runtime `src/` tree.
+- Never place Spring Boot `Application` classes, `application.properties`, or `@AlfrescoEventListener` code in the Platform JAR project.
+- Never place `alfresco/module/...`, content model files, behaviours, actions, or Web Scripts in the Event Handler project.
+- Never try to combine `alfresco-sdk-aggregator` and `alfresco-java-sdk` in the same Maven module or the same deployable artifact.
+
 ```
 {project-name}/
 ├── pom.xml                                          # Parent POM (Maven In-Process SDK 4.15.0)

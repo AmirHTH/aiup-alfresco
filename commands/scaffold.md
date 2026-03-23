@@ -1,5 +1,5 @@
 ---
-description: "Scaffolds the Maven/Spring Boot project structure from REQUIREMENTS.md: pom.xml(s), module.properties, module-context.xml, and Spring Boot Application class. Supports Platform JAR (in-process), Event Handler (out-of-process), and Mixed (both) architectures. Run this first, before /content-model."
+description: "Scaffolds one deployable project or a mixed two-project repository from REQUIREMENTS.md: pom.xml(s), module.properties, module-context.xml, and Spring Boot Application class. Supports Platform JAR (in-process), Event Handler (out-of-process), and Mixed (both) architectures. Run this first, before /content-model."
 user-invocable: true
 allowed-tools: "Read, Write, Glob"
 ---
@@ -20,9 +20,24 @@ Must run **once**, at the start of a project, before any other generation comman
    - `artifactId` — base Maven artifact ID (default: kebab-case of extension name)
 
 3. Derive from `REQUIREMENTS.md`:
-   - `{module-id}` = `{artifactId}` (kebab-case)
+   - `{platform-artifactId}` = `{artifactId}` in Mode A, `{artifactId}-platform` in Mode C
+   - `{events-artifactId}` = `{artifactId}` in Mode B, `{artifactId}-events` in Mode C
+   - `{module-id}` = `{platform-artifactId}` (the Platform JAR module's artifact ID)
    - `{java-package}` = `{groupId}.{artifactId-camelCase}` (e.g. `com.acme.duplicateguard`)
    - `{acs-version}` = target ACS version (e.g. `26.1` → property value `26.1.0`)
+
+## Critical Separation Rule
+
+When `REQUIREMENTS.md` declares both a Platform JAR project and an Event Handler project:
+
+- generate **two sibling child modules/projects**, not one combined Maven module
+- keep repository addon files only in the Platform JAR project
+- keep Spring Boot event-listener files only in the Event Handler project
+- leave the repo root as an aggregator only; do **not** create a runtime `src/` tree there
+
+Forbidden output shape:
+- one Maven module containing both `src/main/resources/alfresco/module/...` and Spring Boot `Application.java` / `application.properties`
+- one POM that attempts to mix `alfresco-sdk-aggregator` and `alfresco-java-sdk`
 
 ---
 
@@ -63,7 +78,7 @@ Aggregator POM at the repo root, two child modules as sibling directories.
 ├── {artifactId}-platform/         ← Platform JAR child module
 │   ├── pom.xml
 │   ├── src/main/java/{java-package}/
-│   └── src/main/resources/alfresco/module/{module-id}-platform/
+│   └── src/main/resources/alfresco/module/{artifactId}-platform/
 │       ├── module.properties
 │       ├── module-context.xml
 │       └── context/
@@ -95,11 +110,8 @@ Aggregator POM at the repo root, two child modules as sibling directories.
         <version>4.15.0</version>
     </parent>
 
-    <!-- In Mode C: declare the aggregator as parent -->
-    <!-- <parent><groupId>{groupId}</groupId><artifactId>{artifactId}</artifactId><version>1.0.0-SNAPSHOT</version></parent> -->
-
     <groupId>{groupId}</groupId>
-    <artifactId>{artifactId}</artifactId>          <!-- or {artifactId}-platform in Mode C -->
+    <artifactId>{platform-artifactId}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -188,11 +200,13 @@ Aggregator POM at the repo root, two child modules as sibling directories.
 - Do NOT add version tags to Alfresco dependencies — the Alfresco BOM manages them after it is imported
 - Pin `junit-jupiter`, `maven-compiler-plugin`, and `maven-surefire-plugin` explicitly in the generated POM
 - Do NOT add the AMP plugin unless the user explicitly requests AMP packaging
+- In Mode C, the Platform JAR child module still keeps `alfresco-sdk-aggregator` as its parent; the root aggregator is **not** this POM's parent
 
 ---
 
 ### Platform JAR — `module.properties`
-*`src/main/resources/alfresco/module/{module-id}/module.properties`*
+*`src/main/resources/alfresco/module/{module-id}/module.properties`*  
+*(Mode A at repo root; Mode C under `{artifactId}-platform/`.)*
 
 ```properties
 module.id={groupId}.{module-id}
@@ -210,7 +224,8 @@ module.repo.version.min={acs-version}
 ---
 
 ### Platform JAR — `module-context.xml`
-*`src/main/resources/alfresco/module/{module-id}/module-context.xml`*
+*`src/main/resources/alfresco/module/{module-id}/module-context.xml`*  
+*(Mode A at repo root; Mode C under `{artifactId}-platform/`.)*
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -257,11 +272,8 @@ module.repo.version.min={acs-version}
         <version>7.2.0</version>
     </parent>
 
-    <!-- In Mode C: declare the aggregator as parent instead of alfresco-java-sdk -->
-    <!-- <parent><groupId>{groupId}</groupId><artifactId>{artifactId}</artifactId><version>1.0.0-SNAPSHOT</version></parent> -->
-
     <groupId>{groupId}</groupId>
-    <artifactId>{artifactId}-events</artifactId>   <!-- always suffixed -events -->
+    <artifactId>{events-artifactId}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -310,12 +322,13 @@ module.repo.version.min={acs-version}
 **Rules:**
 - Do NOT specify a `<version>` for `alfresco-java-event-api-spring-boot-starter` — managed by the SDK parent BOM
 - `spring-boot-maven-plugin` is required to produce an executable fat JAR
-- In Mode C, the `alfresco-java-sdk` parent cannot also be the aggregator — use a plain aggregator POM (see below) and reference it via `<relativePath>`
+- In Mode C, the Event Handler child module still keeps `alfresco-java-sdk` as its parent; the root aggregator is **not** this POM's parent
 
 ---
 
 ### Event Handler — `Application.java`
-*`src/main/java/{java-package}/Application.java`*
+*`src/main/java/{java-package}/Application.java`*  
+*(Mode B at repo root; Mode C under `{artifactId}-events/`.)*
 
 ```java
 package {java-package};
@@ -335,7 +348,8 @@ public class Application {
 ---
 
 ### Event Handler — `application.properties`
-*`src/main/resources/application.properties`*
+*`src/main/resources/application.properties`*  
+*(Mode B at repo root; Mode C under `{artifactId}-events/`.)*
 
 ```properties
 # ActiveMQ broker connection — values injected from environment variables.
@@ -394,6 +408,7 @@ alfresco.events.defaultExchangeName=alfresco.repo.event2
 - The aggregator must have `<packaging>pom</packaging>` and **no** `<parent>` element
 - Do not define dependencies or plugins in the aggregator — each child manages its own
 - `mvn clean package` from the aggregator root builds both child modules in declaration order
+- Do not create runtime source files under the repo root in Mode C
 
 ---
 
@@ -401,7 +416,7 @@ alfresco.events.defaultExchangeName=alfresco.repo.event2
 
 | Item | Rule |
 |------|------|
-| `{module-id}` | kebab-case `{artifactId}` (e.g. `alfresco-invoice-processor`) |
+| `{module-id}` | `{platform-artifactId}`; in Mode C this means `{artifactId}-platform` |
 | `{java-package}` | `{groupId}.{artifactId-nohyphens}` (e.g. `com.acme.invoiceprocessor`) |
 | Platform JAR suffix (Mode C) | `{artifactId}-platform` |
 | Event Handler suffix | always `{artifactId}-events` |

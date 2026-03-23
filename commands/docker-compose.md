@@ -11,6 +11,7 @@ Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 ## Input
 - ACS version from "$ARGUMENTS" or default to 26.1
 - Read `REQUIREMENTS.md` for any deployment-specific requirements
+- Resolve the `Root path` values from Section 2 (Project Architecture)
 
 ## Output File
 `compose.yaml` at project root.
@@ -41,7 +42,11 @@ Generate a complete `compose.yaml` for an Alfresco Content Services stack.
 - Use `condition: service_healthy` in `depends_on`
 - Use named volumes for persistent data
 - Reference CLAUDE.md for image tags and environment variables
+- `compose.yaml` always lives at the repository root, even in Mixed mode
+- If a Platform JAR project is present, mount or copy its built artifact from the Platform JAR `Root path`
 - If an Out-of-Process Spring Boot app is present, add it as a service that depends on `activemq` and `alfresco` with `condition: service_healthy`
+- If an Out-of-Process Spring Boot app is present, its `build:` context must point to the Event Handler `Root path` from `REQUIREMENTS.md` (`.` for Event Handler only mode, `{name}-events/` for Mixed mode)
+- Never assume the Platform JAR and Event Handler share the same build context or the same deployable artifact
 
 ## Validation
 After generation, invoke `docker-compose-healthcheck-injector` skill.
