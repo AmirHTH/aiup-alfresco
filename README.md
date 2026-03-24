@@ -106,6 +106,60 @@ See [PORTABILITY.md](./PORTABILITY.md) for the non-Claude workflow.
 | `/docker-compose` | Both | Before last | `compose.yaml` with full ACS stack |
 | `/test` | Both | Last | Integration test class + HTTP test scripts |
 
+## Command Lifecycle
+
+```mermaid
+flowchart TD
+    start([Feature request]) --> req["/requirements"]
+    req --> arch{"Architecture decided in REQUIREMENTS.md"}
+
+    arch -->|Platform JAR only| p_scaffold["/scaffold"]
+    arch -->|Event Handler only| e_scaffold["/scaffold"]
+    arch -->|Mixed| m_scaffold["/scaffold"]
+
+    subgraph platform["Platform JAR only"]
+        p_scaffold --> p_model["/content-model<br/>if custom types/aspects are needed"]
+        p_scaffold --> p_ws["/web-scripts<br/>if ACS-hosted API is needed"]
+        p_scaffold --> p_beh["/behaviours<br/>if synchronous rules are needed"]
+        p_scaffold --> p_actions["/actions<br/>if on-demand actions are needed"]
+        p_scaffold --> p_compose["/docker-compose"]
+        p_model --> p_compose
+        p_ws --> p_compose
+        p_beh --> p_compose
+        p_actions --> p_compose
+        p_compose --> p_test["/test"]
+    end
+
+    subgraph events["Event Handler only"]
+        e_scaffold --> e_events["/events"]
+        e_events --> e_compose["/docker-compose"]
+        e_compose --> e_test["/test"]
+    end
+
+    subgraph mixed["Mixed repository"]
+        m_scaffold --> m_model["/content-model<br/>platform module, if needed"]
+        m_scaffold --> m_ws["/web-scripts<br/>platform module, if needed"]
+        m_scaffold --> m_beh["/behaviours<br/>platform module, if needed"]
+        m_scaffold --> m_actions["/actions<br/>platform module, if needed"]
+        m_scaffold --> m_events["/events<br/>events module"]
+        m_scaffold --> m_compose["/docker-compose"]
+        m_model --> m_compose
+        m_ws --> m_compose
+        m_beh --> m_compose
+        m_actions --> m_compose
+        m_events --> m_compose
+        m_compose --> m_test["/test"]
+    end
+```
+
+Notes:
+
+- `/scaffold` is the gate for every generation command; if `REQUIREMENTS.md` does not exist yet, run `/requirements` first.
+- `/content-model`, `/web-scripts`, `/behaviours`, and `/actions` are only valid when the architecture includes a Platform JAR project.
+- `/events` is only valid when the architecture includes an Event Handler project.
+- `/docker-compose` is the convergence point before `/test`; container-based tests expect `compose.yaml` to exist.
+- After `/scaffold`, the applicable generator commands can be run in any needed order, although `/content-model` is usually generated early when later code binds to custom types or aspects.
+
 ## Skills
 
 Skills are invoked automatically by Claude during command execution:
