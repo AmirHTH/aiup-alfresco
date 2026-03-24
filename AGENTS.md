@@ -32,7 +32,7 @@ Choose one search profile per deployment — do not mix them.
 alfresco/alfresco-content-repository-community:26.1.0
 alfresco/alfresco-share:26.1.0
 opensearchproject/opensearch:2.x
-postgres:15.6
+postgres:17.9
 docker.io/alfresco/alfresco-activemq:6.2.1-jre17-rockylinux8
 alfresco/alfresco-transform-core-aio:5.4.0
 ```
@@ -43,7 +43,7 @@ alfresco/alfresco-transform-core-aio:5.4.0
 alfresco/alfresco-content-repository-community:26.1.0
 alfresco/alfresco-share:26.1.0
 alfresco/alfresco-search-services:2.0.18
-postgres:15.6
+postgres:17.9
 docker.io/alfresco/alfresco-activemq:6.2.1-jre17-rockylinux8
 alfresco/alfresco-transform-core-aio:5.4.0
 ```
@@ -347,6 +347,31 @@ All collection responses must use the Alfresco paging envelope:
 | Solr *(Search Services)* | `curl -f -H "X-Alfresco-Search-Secret: $${SOLR_ALFRESCO_SECRET}" http://localhost:8983/solr/alfresco/admin/ping` |
 | OpenSearch / Elasticsearch *(Search Enterprise)* | `curl -s http://localhost:9200/_cluster/health \| grep -q 'green\|yellow'` |
 | Transform | `curl -f http://localhost:8090/ready` |
+
+### Encryption Keystore — Required Setup for ACS 26.1
+
+ACS 26.1 ships with a JCEKS keystore inside the image at
+`/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore`.
+Use it directly — **no custom keystore generation or host volume mount is needed**.
+
+Only `JAVA_TOOL_OPTIONS` is required:
+
+```yaml
+environment:
+  JAVA_TOOL_OPTIONS: >-
+    -Dencryption.keystore.type=JCEKS
+    -Dencryption.cipherAlgorithm=DESede/CBC/PKCS5Padding
+    -Dencryption.keyAlgorithm=DESede
+    -Dencryption.keystore.location=/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore
+    -Dmetadata-keystore.password=mp6yc0UD9e
+    -Dmetadata-keystore.aliases=metadata
+    -Dmetadata-keystore.metadata.password=oKIWzVdEdA
+    -Dmetadata-keystore.metadata.algorithm=DESede
+```
+
+> **Common pitfall**: the metadata key password is `oKIWzVdEdA` (not `oKIWzOIvdD`).
+> Using the wrong password causes `02240004 Failed to retrieve keys from keystore: Given final block not properly padded`.
+> Omitting `JAVA_TOOL_OPTIONS` entirely causes `02240000 Unable to get secret key: no key information is provided`.
 
 ### Extension Deployment
 Mount the built JAR into the Alfresco container:
