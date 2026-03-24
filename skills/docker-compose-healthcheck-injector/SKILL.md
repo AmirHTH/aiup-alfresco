@@ -34,7 +34,7 @@ Every service must have a `healthcheck` block with:
 ## Known Healthcheck Endpoints
 - Alfresco: `curl -f http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/probes/-ready-`
 - Share: `curl -f -u admin:$${ALFRESCO_PASSWORD} http://localhost:8080/share`
-- ActiveMQ: `/opt/activemq/bin/activemq query --user $${ACTIVEMQ_USER} --password $${ACTIVEMQ_PASSWORD} --objname "type=Broker,brokerName=*,service=Health" | grep Good`
+- ActiveMQ: `curl -sf -u $${ACTIVEMQ_USER:-admin}:$${ACTIVEMQ_PASSWORD:-admin} http://localhost:8161/admin/ > /dev/null`
 - PostgreSQL: `pg_isready -d alfresco -U alfresco`
 - Solr *(Search Services)*: `curl -f -H "X-Alfresco-Search-Secret: $${SOLR_ALFRESCO_SECRET}" http://localhost:8983/solr/alfresco/admin/ping`
 - OpenSearch / Elasticsearch *(Search Enterprise)*: `curl -s http://localhost:9200/_cluster/health | grep -q 'green\|yellow'`

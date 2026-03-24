@@ -28,7 +28,7 @@ Self-contained: starts the ACS stack from `compose.yaml` via `DockerComposeConta
 scenarios, then tears everything down. No pre-running ACS instance required.
 
 ```java
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class {Name}ContainerIT {
@@ -99,7 +99,7 @@ Add to `{platform-project-root}/pom.xml`:
 
 ```xml
 <properties>
-    <testcontainers.version>1.19.8</testcontainers.version>
+    <testcontainers.version>1.20.2</testcontainers.version>
     <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
 </properties>
 
@@ -126,12 +126,6 @@ Add to `{platform-project-root}/pom.xml`:
     <dependency>
         <groupId>org.testcontainers</groupId>
         <artifactId>junit-jupiter</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>2.0.13</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -166,11 +160,27 @@ Add to `{platform-project-root}/pom.xml`:
                     <acs.username>${acs.username}</acs.username>
                     <acs.password>${acs.password}</acs.password>
                 </systemPropertyVariables>
+                <!-- Docker Desktop 29.x on macOS requires API >= 1.40; docker-java defaults to older versions.
+                     API_VERSION (not DOCKER_API_VERSION) is the env var docker-java 3.3.x actually reads. -->
+                <environmentVariables>
+                    <API_VERSION>1.44</API_VERSION>
+                </environmentVariables>
             </configuration>
         </plugin>
     </plugins>
 </build>
 ```
+
+> **macOS one-time setup**: Docker Desktop 29.x rejects Docker API versions below 1.40.
+> The `<environmentVariables>` block above covers CI, but local developer machines also need:
+> ```bash
+> echo "api.version=1.44" >> ~/.docker-java.properties
+> cat > ~/.testcontainers.properties <<'EOF'
+> testcontainers.reuse.enable=true
+> docker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy
+> EOF
+> ```
+> See the *Docker Desktop on macOS — Testcontainers Compatibility* section in `AGENTS.md` for details.
 
 **Run commands**:
 ```bash

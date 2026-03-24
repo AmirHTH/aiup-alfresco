@@ -343,7 +343,7 @@ All collection responses must use the Alfresco paging envelope:
 | Alfresco | `curl -f http://localhost:8080/alfresco/api/-default-/public/alfresco/versions/1/probes/-ready-` |
 | Share | `curl -f -u admin:$${ALFRESCO_PASSWORD} http://localhost:8080/share` |
 | PostgreSQL | `pg_isready -d alfresco -U alfresco` |
-| ActiveMQ | `/opt/activemq/bin/activemq query --user $${ACTIVEMQ_USER} --password $${ACTIVEMQ_PASSWORD} --objname "type=Broker,brokerName=*,service=Health" \| grep Good` |
+| ActiveMQ | `curl -sf -u $${ACTIVEMQ_USER:-admin}:$${ACTIVEMQ_PASSWORD:-admin} http://localhost:8161/admin/ > /dev/null` |
 | Solr *(Search Services)* | `curl -f -H "X-Alfresco-Search-Secret: $${SOLR_ALFRESCO_SECRET}" http://localhost:8983/solr/alfresco/admin/ping` |
 | OpenSearch / Elasticsearch *(Search Enterprise)* | `curl -s http://localhost:9200/_cluster/health \| grep -q 'green\|yellow'` |
 | Transform | `curl -f http://localhost:8090/ready` |
@@ -358,6 +358,39 @@ Or build a custom image:
 ```dockerfile
 FROM alfresco/alfresco-content-repository-community:26.1.0
 COPY target/{artifact}.jar /usr/local/tomcat/webapps/alfresco/WEB-INF/lib/
+```
+
+### Docker Desktop on macOS — Testcontainers Compatibility
+
+Docker Desktop 29.x on macOS raised the minimum accepted Docker API version to **1.40**. The docker-java library bundled with Testcontainers defaults to an older version and receives an HTTP 400 response, causing Testcontainers to report *"Could not find valid Docker environment"* even when Docker is running.
+
+**One-time developer-machine setup (macOS only):**
+
+```bash
+# 1. Tell docker-java to use API 1.44
+echo "api.version=1.44" >> ~/.docker-java.properties
+
+# 2. Force Unix socket strategy and remove any stale TCP endpoint entries
+cat > ~/.testcontainers.properties <<'EOF'
+testcontainers.reuse.enable=true
+docker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy
+EOF
+```
+
+**In every `pom.xml` that runs Testcontainers** — add to the Failsafe plugin `<configuration>` so CI processes and fresh checkouts also work:
+
+```xml
+<environmentVariables>
+    <API_VERSION>1.44</API_VERSION>
+</environmentVariables>
+```
+
+> **Why `API_VERSION`, not `DOCKER_API_VERSION`**: docker-java 3.3.x defines the constant as `API_VERSION` (not `DOCKER_API_VERSION`). The properties file key is `api.version`. Setting the wrong name is silently ignored.
+
+**Always annotate the Testcontainers test class with `disabledWithoutDocker = true`** so builds without Docker skip gracefully instead of failing:
+
+```java
+@Testcontainers(disabledWithoutDocker = true)
 ```
 
 ---
