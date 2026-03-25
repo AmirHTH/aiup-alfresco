@@ -16,7 +16,7 @@ This file defines the conventions that every AI agent must follow when generatin
 | Spring Framework | 6.x | Managed by Spring Boot |
 | Maven | 3.9+ | Build tool |
 | Docker Compose | v2 | No `version:` key in compose files |
-| PostgreSQL | 15.6 | Default database |
+| PostgreSQL | 17.9 | Default database |
 | Apache ActiveMQ | 6.2.1 | Event messaging — authentication required |
 | Search Enterprise (OpenSearch) | 4.0 | **Recommended** — OpenSearch 2.x or Elasticsearch 8.x backend |
 | Search Services (Solr) | 2.0.18 | Alternative — Solr-based, community default |
@@ -502,5 +502,6 @@ These patterns must **never** appear in generated code. Actively check for and r
 | Wildcard imports (`import *`) | Clarity and conflict risk | Explicit imports |
 | Reserved namespace prefixes | Conflicts with Alfresco core | Use project-specific prefix |
 | `<mandatory enforced="true">` on aspect properties | `enforced="true"` fires `IntegrityChecker` via `OnAddAspectPolicy` before `addAspect()` writes the properties map, causing a spurious `IntegrityException: Mandatory property not set` | Use `<mandatory>true</mandatory>` (no `enforced` attribute) — defers the check to `beforeCommit` |
+| Lucene query language or `@variable` property syntax | `SearchService.LANGUAGE_LUCENE` and the `@{namespace}property` / `@prefix\:property` notation are deprecated since ACS 6.x, incompatible with Search Enterprise (Elasticsearch/OpenSearch), and produce unpredictable results with Solr 6+. Example of the forbidden pattern: `sp.setLanguage(LANGUAGE_LUCENE); sp.setQuery("@cm\\:name:\"foo\"")` | Always use `SearchService.LANGUAGE_FTS_ALFRESCO` with AFTS syntax: `sp.setLanguage(LANGUAGE_FTS_ALFRESCO); sp.setQuery("cm:name:\"foo\"")` |
 | Quoted phrase syntax in transactional AFTS queries | `@prefix\:prop:"value"` triggers `DEFAULT` analysis mode, which the DB query engine rejects with `QueryModelException: Analysis mode not supported for DB DEFAULT` | Prefix with `=`: `=@prefix\:prop:"value"` to force `IDENTIFIER`/exact-match mode |
 | Expensive operations before eligibility check in behaviours | Every upload pays the full behaviour cost even when the behaviour is not configured for that folder | Check scope/eligibility first (cheap `NodeService` calls); return early before any content streaming, hashing, or locking |

@@ -37,17 +37,47 @@ Add bean definition to `{platform-project-root}/src/main/resources/alfresco/modu
 - Handle transaction context properly
 - Never generate behaviours inside the Event Handler project
 
-## Transactional AFTS Query Rules
+## SearchService Query Rules
+
+### Rule 1 — Always use AFTS; never use Lucene query language
+
+Every `SearchParameters` object **must** use `SearchService.LANGUAGE_FTS_ALFRESCO`.
+`SearchService.LANGUAGE_LUCENE` is deprecated since ACS 6.x, incompatible with Search
+Enterprise (Elasticsearch/OpenSearch), and must never appear in generated code.
+
+```java
+// CORRECT
+SearchParameters sp = new SearchParameters();
+sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
+sp.setQuery("TYPE:\"vc:vendorContract\" AND cm:name:\"foo\"");
+
+// WRONG — old Lucene style, forbidden
+sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+sp.setQuery("@cm\\:name:\"foo\"");                         // @variable notation — forbidden
+sp.setQuery("@{http://…/content/1.0}name:\"foo\"");       // namespace-qualified — forbidden
+```
+
+The `@variable` / `@{namespace}property` notation belongs to the Lucene query parser.
+In AFTS, reference properties directly by their prefixed name: `prefix:property`.
+
+| Lucene (forbidden) | AFTS equivalent |
+|--------------------|-----------------|
+| `@cm\\:name:"foo"` | `cm:name:"foo"` |
+| `@{http://…/content/1.0}name:"foo"` | `cm:name:"foo"` |
+| `TYPE:"cm:content"` | *(same in AFTS — TYPE keyword is shared)* |
+| `@vc\\:expiryDate:[MIN TO NOW]` | `vc:expiryDate:[MIN TO NOW]` |
+
+### Rule 2 — Transactional queries require the `=` exact-match prefix
 
 When a behaviour calls `SearchService` with `QueryConsistency.TRANSACTIONAL` (DB-backed, bypasses
 Solr), the query syntax for property matching **must** use the `=` exact-match prefix:
 
 ```java
 // CORRECT — IDENTIFIER/exact-match mode, supported by the DB query engine
-"=@prefix\\:propertyName:\"value\""
+"=vc\\:responsibleDepartment:\"IT\""
 
 // WRONG — phrase mode (DEFAULT analysis), throws QueryModelException in ACS 26.1
-"@prefix\\:propertyName:\"value\""
+"vc\\:responsibleDepartment:\"IT\""
 ```
 
 **Why**: The DB query engine (`DBFTSPhrase`) rejects `DEFAULT` analysis mode and throws
